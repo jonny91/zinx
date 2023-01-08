@@ -3,11 +3,10 @@ package znet
 import (
 	"errors"
 	"fmt"
-	"net"
-
-	"github.com/aceld/zinx/utils"
-	"github.com/aceld/zinx/ziface"
-	"github.com/aceld/zinx/zpack"
+    "github.com/jonny91/zinxx/utils"
+    "github.com/jonny91/zinxx/ziface"
+    "github.com/jonny91/zinxx/zpack"
+    "net"
 )
 
 var zinxLogo = `                                        

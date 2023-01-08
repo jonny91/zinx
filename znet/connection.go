@@ -4,14 +4,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/aceld/zinx/zpack"
-	"io"
+    "github.com/jonny91/zinxx/ziface"
+    "github.com/jonny91/zinxx/zpack"
+    "io"
 	"net"
 	"sync"
 	"time"
 
-	"github.com/aceld/zinx/utils"
-	"github.com/aceld/zinx/ziface"
+    "github.com/jonny91/zinxx/utils"
 )
 
 //Connection 链接

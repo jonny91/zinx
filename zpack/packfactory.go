@@ -1,8 +1,8 @@
 package zpack
 
 import (
-	"github.com/aceld/zinx/ziface"
-	"sync"
+    "github.com/jonny91/zinxx/ziface"
+    "sync"
 )
 
 var pack_once sync.Once

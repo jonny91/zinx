@@ -3,9 +3,9 @@ package znet
 import (
 	"errors"
 	"fmt"
-	"sync"
+    "github.com/jonny91/zinxx/ziface"
+    "sync"
 
-	"github.com/aceld/zinx/ziface"
 )
 
 //ConnManager 连接管理模块

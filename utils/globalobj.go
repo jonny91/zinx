@@ -15,10 +15,10 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/aceld/zinx/utils/commandline/args"
-	"github.com/aceld/zinx/utils/commandline/uflag"
-	"github.com/aceld/zinx/ziface"
-	"github.com/aceld/zinx/zlog"
+    "github.com/jonny91/zinxx/utils/commandline/args"
+    "github.com/jonny91/zinxx/utils/commandline/uflag"
+    "github.com/jonny91/zinxx/ziface"
+    "github.com/jonny91/zinxx/zlog"
 )
 
 /*

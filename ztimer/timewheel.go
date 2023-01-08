@@ -12,7 +12,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/aceld/zinx/zlog"
+	"github.com/jonny91/zinxx/zlog"
 )
 
 /*

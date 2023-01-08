@@ -19,7 +19,7 @@ Website:http://zinx.me
 ---
 ## Source of Zinx
 ### Github
-Git: https://github.com/aceld/zinx
+Git: https://github.com/jonny91/zinxx
 
 ### Gitee(China)
 Git: https://gitee.com/Aceld/zinx
@@ -83,7 +83,7 @@ Golang 1.16+
 
 ```bash
 # clone from git
-$ git clone https://github.com/aceld/zinx.git
+$ git clone https://github.com/jonny91/zinxx.git
 
 # cd the dir of Demo
 $ cd ./zinx/examples/zinx_server
@@ -196,8 +196,8 @@ The custom route and service configuration methods are as follows：
 ```go
 import (
 	"fmt"
-	"github.com/aceld/zinx/ziface"
-	"github.com/aceld/zinx/znet"
+	"github.com/jonny91/zinxx/ziface"
+	"github.com/jonny91/zinxx/znet"
 )
 
 //ping test custom route
@@ -228,7 +228,7 @@ import (
 	"io"
 	"net"
 	"time"
-	"github.com/aceld/zinx/znet"
+	"github.com/jonny91/zinxx/znet"
 )
 
 /*
@@ -416,7 +416,7 @@ func (c *Connection) RemoveProperty(key string)
 -  胡琪([@huqitt](https://github.com/huqitt))
 
 ---
-[zinx(for websocket)](https://github.com/aceld/zinx/tree/wsserver)
+[zinx(for websocket)](https://github.com/jonny91/zinxx/tree/wsserver)
 #### Developers
 -  胡贵建([@huguijian](https://github.com/huguijian))
 
@@ -424,7 +424,7 @@ func (c *Connection) RemoveProperty(key string)
 
 Thanks to all the developers who contributed to Zinx!
 
-<a href="https://github.com/aceld/zinx/graphs/contributors">
+<a href="https://github.com/jonny91/zinxx/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=aceld/zinx" />
 </a>    
 

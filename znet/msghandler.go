@@ -2,10 +2,9 @@ package znet
 
 import (
 	"fmt"
-	"strconv"
-
-	"github.com/aceld/zinx/utils"
-	"github.com/aceld/zinx/ziface"
+    "github.com/jonny91/zinxx/utils"
+    "github.com/jonny91/zinxx/ziface"
+    "strconv"
 )
 
 // MsgHandle -
