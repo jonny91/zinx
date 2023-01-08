@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"encoding/binary"
 	"errors"
-    "github.com/jonny91/zinxx/utils"
-    "github.com/jonny91/zinxx/ziface"
+    "github.com/jonny91/zinx/utils"
+    "github.com/jonny91/zinx/ziface"
 )
 
 var defaultHeaderLen uint32 = 8

@@ -17,7 +17,7 @@ Zinx 是一个基于Golang的轻量级并发服务器框架
 ---
 ## zinx源码地址
 ### Github
-Git: https://github.com/jonny91/zinxx
+Git: https://github.com/jonny91/zinx
 
 ### 码云(Gitee)
 Git: https://gitee.com/Aceld/zinx
@@ -77,7 +77,7 @@ Golang 1.16+
 
 ```bash
 # 克隆项目
-$ git clone https://github.com/jonny91/zinxx.git
+$ git clone https://github.com/jonny91/zinx.git
 
 # 进入服务端样例目录
 $ cd ./zinx/examples/zinx_server
@@ -188,8 +188,8 @@ func main() {
 ```go
 import (
 	"fmt"
-	"github.com/jonny91/zinxx/ziface"
-	"github.com/jonny91/zinxx/znet"
+	"github.com/jonny91/zinx/ziface"
+	"github.com/jonny91/zinx/znet"
 )
 
 //ping test 自定义路由
@@ -220,7 +220,7 @@ import (
 	"io"
 	"net"
 	"time"
-	"github.com/jonny91/zinxx/znet"
+	"github.com/jonny91/zinx/znet"
 )
 
 /*
@@ -407,7 +407,7 @@ func (c *Connection) RemoveProperty(key string)
 -  胡琪([@huqitt](https://github.com/huqitt))
 
 ---
-[zinx(websocket版本)](https://github.com/jonny91/zinxx/tree/wsserver)
+[zinx(websocket版本)](https://github.com/jonny91/zinx/tree/wsserver)
 #### 开发者
 -  胡贵建([@huguijian](https://github.com/huguijian))
 
@@ -416,7 +416,7 @@ func (c *Connection) RemoveProperty(key string)
 感谢所有为zinx贡献的开发者
 
 
-<a href="https://github.com/jonny91/zinxx/graphs/contributors">
+<a href="https://github.com/jonny91/zinx/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=aceld/zinx" />
 </a>    
 

@@ -2,8 +2,8 @@ package znet
 
 import (
 	"fmt"
-    "github.com/jonny91/zinxx/utils"
-    "github.com/jonny91/zinxx/ziface"
+    "github.com/jonny91/zinx/utils"
+    "github.com/jonny91/zinx/ziface"
     "strconv"
 )
 

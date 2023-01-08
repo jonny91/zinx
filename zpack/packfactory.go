@@ -1,7 +1,7 @@
 package zpack
 
 import (
-    "github.com/jonny91/zinxx/ziface"
+    "github.com/jonny91/zinx/ziface"
     "sync"
 )
 

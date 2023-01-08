@@ -1,4 +1,4 @@
-module github.com/jonny91/zinxx
+module github.com/jonny91/zinx
 
 go 1.13
 
