@@ -4,6 +4,7 @@ import (
 	"github.com/jonny91/zinx/utils/commandline/uflag"
 	"os"
 	"path"
+    "path/filepath"
 )
 
 type args struct {
@@ -40,7 +41,7 @@ func InitConfigFlag(defaultValue string, tips string) {
 }
 
 func FlagHandle() {
-	if !path.IsAbs(Args.ConfigFile) {
+    if !filepath.IsAbs(Args.ConfigFile) {
 		Args.ConfigFile = path.Join(Args.ExeAbsDir,Args.ConfigFile)
 	}
 }
