@@ -16,46 +16,40 @@ import (
 
 // Connection 链接
 type Connection struct {
-	//当前Conn属于哪个Server
-	TCPServer ziface.IServer
-	//客户端使用
-	TCPClient ziface.IClient
-	//当前连接的socket TCP套接字
-	Conn *net.TCPConn
-	//当前连接的ID 也可以称作为SessionID，ID全局唯一
-	ConnID uint32
-	//消息管理MsgID和对应处理方法的消息管理模块
-	MsgHandler ziface.IMsgHandle
-	//告知该链接已经退出/停止的channel
-	ctx    context.Context
-	cancel context.CancelFunc
-	//有缓冲管道，用于读、写两个goroutine之间的消息通信
-	msgBuffChan chan []byte
-
+	ServerOrClient bool                   //标记当前网络节点是服务器还是客户端  true:服务器 false:客户端
+	TCPServer      ziface.IServer         //当前Conn属于哪个Server
+	TCPClient      ziface.IClient         //客户端使用
+	Conn           *net.TCPConn           //当前连接的socket TCP套接字
+	ConnID         uint32                 //当前连接的ID 也可以称作为SessionID，ID全局唯一
+	MsgHandler     ziface.IMsgHandle      //消息管理MsgID和对应处理方法的消息管理模块
+	ctx            context.Context        //告知该链接已经退出/停止的channel
+	msgBuffChan    chan []byte            //有缓冲管道，用于读、写两个goroutine之间的消息通信
+	property       map[string]interface{} //链接属性
+	propertyLock   sync.Mutex             //保护当前property的锁
+	isClosed       bool                   //当前连接的关闭状态
+	cancel         context.CancelFunc
 	sync.RWMutex
-	//链接属性
-	property map[string]interface{}
-	////保护当前property的锁
-	propertyLock sync.Mutex
-	//当前连接的关闭状态
-	isClosed bool
 }
 
-// NewConnection 创建连接的方法
-func NewConnection(server ziface.IServer, conn *net.TCPConn, connID uint32, msgHandler ziface.IMsgHandle) *Connection {
+// NewServerConnection 创建连接的方法
+func NewServerConnection(server ziface.IServer, conn *net.TCPConn, connID uint32, msgHandler ziface.IMsgHandle) *Connection {
 	//初始化Conn属性
 	c := &Connection{
-		TCPServer:   server,
-		Conn:        conn,
-		ConnID:      connID,
-		isClosed:    false,
-		MsgHandler:  msgHandler,
-		msgBuffChan: make(chan []byte, utils.GlobalObject.MaxMsgChanLen),
-		property:    nil,
+		TCPServer:      server,
+		Conn:           conn,
+		ConnID:         connID,
+		isClosed:       false,
+		MsgHandler:     msgHandler,
+		msgBuffChan:    make(chan []byte, utils.GlobalObject.MaxMsgChanLen),
+		property:       nil,
+		ServerOrClient: true,
 	}
 
 	//将新创建的Conn添加到链接管理中
-	c.TCPServer.GetConnMgr().Add(c)
+	//其实肯定是true
+	if c.ServerOrClient {
+		c.TCPServer.GetConnMgr().Add(c)
+	}
 	return c
 }
 
@@ -63,14 +57,16 @@ func NewConnection(server ziface.IServer, conn *net.TCPConn, connID uint32, msgH
 func NewClientConnection(client ziface.IClient, conn *net.TCPConn, connID uint32, msgHandler ziface.IMsgHandle) *Connection {
 	//初始化Conn属性
 	c := &Connection{
-		TCPClient:   client,
-		Conn:        conn,
-		ConnID:      connID,
-		isClosed:    false,
-		MsgHandler:  msgHandler,
-		msgBuffChan: make(chan []byte, utils.GlobalObject.MaxMsgChanLen),
-		property:    nil,
+		TCPClient:      client,
+		Conn:           conn,
+		ConnID:         connID,
+		isClosed:       false,
+		MsgHandler:     msgHandler,
+		msgBuffChan:    make(chan []byte, utils.GlobalObject.MaxMsgChanLen),
+		property:       nil,
+		ServerOrClient: false,
 	}
+
 	return c
 }
 
@@ -112,7 +108,7 @@ func (c *Connection) StartReader() {
 		default:
 
 			//读取客户端的Msg head
-			headData := make([]byte, c.TCPServer.Packet().GetHeadLen())
+			headData := make([]byte, c.getNetPort().Packet().GetHeadLen())
 			if _, err := io.ReadFull(c.Conn, headData); err != nil {
 				fmt.Println("read msg head error ", err)
 				return
@@ -120,7 +116,7 @@ func (c *Connection) StartReader() {
 			//fmt.Printf("read headData %+v\n", headData)
 
 			//拆包，得到msgID 和 datalen 放在msg中
-			msg, err := c.TCPServer.Packet().Unpack(headData)
+			msg, err := c.getNetPort().Packet().Unpack(headData)
 			if err != nil {
 				fmt.Println("unpack error ", err)
 				return
@@ -159,7 +155,7 @@ func (c *Connection) StartReader() {
 func (c *Connection) Start() {
 	c.ctx, c.cancel = context.WithCancel(context.Background())
 	//按照用户传递进来的创建连接时需要处理的业务，执行钩子方法
-	c.TCPServer.CallOnConnStart(c)
+	c.getNetPort().CallOnConnStart(c)
 	//1 开启用户从客户端读取数据流程的Goroutine
 	go c.StartReader()
 	//2 开启用于写回客户端数据流程的Goroutine
@@ -201,7 +197,7 @@ func (c *Connection) SendMsg(msgID uint32, data []byte) error {
 	}
 
 	//将data封包，并且发送
-	dp := c.TCPServer.Packet()
+	dp := c.getNetPort().Packet()
 	msg, err := dp.Pack(zpack.NewMsgPackage(msgID, data))
 	if err != nil {
 		fmt.Println("Pack error msg ID = ", msgID)
@@ -225,7 +221,7 @@ func (c *Connection) SendBuffMsg(msgID uint32, data []byte) error {
 	}
 
 	//将data封包，并且发送
-	dp := c.TCPServer.Packet()
+	dp := c.getNetPort().Packet()
 	msg, err := dp.Pack(zpack.NewMsgPackage(msgID, data))
 	if err != nil {
 		fmt.Println("Pack error msg ID = ", msgID)
@@ -283,7 +279,7 @@ func (c *Connection) Context() context.Context {
 
 func (c *Connection) finalizer() {
 	//如果用户注册了该链接的关闭回调业务，那么在此刻应该显示调用
-	c.TCPServer.CallOnConnStop(c)
+	c.getNetPort().CallOnConnStop(c)
 
 	c.Lock()
 	defer c.Unlock()
@@ -299,10 +295,20 @@ func (c *Connection) finalizer() {
 	_ = c.Conn.Close()
 
 	//将链接从连接管理器中删除
-	c.TCPServer.GetConnMgr().Remove(c)
+	if c.ServerOrClient {
+		c.TCPServer.GetConnMgr().Remove(c)
+	}
 
 	//关闭该链接全部管道
 	close(c.msgBuffChan)
 	//设置标志位
 	c.isClosed = true
+}
+
+func (c *Connection) getNetPort() ziface.INetPort {
+	if c.ServerOrClient == true {
+		return c.TCPServer
+	} else {
+		return c.TCPClient
+	}
 }

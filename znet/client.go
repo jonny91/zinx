@@ -22,6 +22,7 @@ func (c *Client) Dail(network string, ip string, port int) {
 		return
 	}
 	c.Conn = NewClientConnection(c, conn, 0, c.msgHandler)
+	go c.Conn.Start()
 }
 
 func (c *Client) AddRouter(msgID uint32, router ziface.IRouter) {
@@ -30,6 +31,21 @@ func (c *Client) AddRouter(msgID uint32, router ziface.IRouter) {
 
 func (c *Client) GetConn() ziface.IConnection {
 	return c.Conn
+}
+
+func (c *Client) StartAsClient() {
+	c.exitChan = make(chan struct{})
+
+	go func() {
+
+		select {
+		case <-c.exitChan:
+			err := c.GetConn().GetTCPConnection().Close()
+			if err != nil {
+				fmt.Println("client close err ", err)
+			}
+		}
+	}()
 }
 
 func NewClient(name string) ziface.IClient {

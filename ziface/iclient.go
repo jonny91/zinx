@@ -1,7 +1,9 @@
 package ziface
 
 type IClient interface {
+	INetPort
 	Dail(network string, ip string, port int)
-	AddRouter(msgID uint32, router IRouter)
+
 	GetConn() IConnection
+	StartAsClient()
 }
