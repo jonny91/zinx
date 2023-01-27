@@ -59,7 +59,7 @@ func NewServer(opts ...Option) ziface.IServer {
 	return s
 }
 
-// NewServer 创建一个服务器句柄
+// NewUserConfServer 创建一个服务器句柄
 func NewUserConfServer(config *utils.Config, opts ...Option) ziface.IServer {
 	//打印logo
 	printLogo()

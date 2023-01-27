@@ -22,7 +22,6 @@ func (c *Client) Dail(network string, ip string, port int) {
 		return
 	}
 	c.Conn = NewClientConnection(c, conn, 0, c.msgHandler)
-	go c.Conn.Start()
 }
 
 func (c *Client) AddRouter(msgID uint32, router ziface.IRouter) {
@@ -37,6 +36,10 @@ func (c *Client) StartAsClient() {
 	c.exitChan = make(chan struct{})
 
 	go func() {
+		//启动worker工作池机制
+		c.msgHandler.StartWorkerPool()
+
+		go c.Conn.Start()
 
 		select {
 		case <-c.exitChan:
@@ -46,6 +49,7 @@ func (c *Client) StartAsClient() {
 			}
 		}
 	}()
+	select {}
 }
 
 func NewClient(name string) ziface.IClient {
