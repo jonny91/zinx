@@ -41,11 +41,11 @@ func NewServer(opts ...Option) ziface.IServer {
 
 	s := &Server{
 		IPVersion: "tcp4",
-		IP:        utils.GlobalObject.Host,
-		Port:      utils.GlobalObject.TCPPort,
+		IP:        utils.GlobalObject.Server.Host,
+		Port:      utils.GlobalObject.Server.TCPPort,
 		ConnMgr:   NewConnManager(),
 		NetPort: NetPort{
-			Name:       utils.GlobalObject.Name,
+			Name:       utils.GlobalObject.Server.Name,
 			msgHandler: NewMsgHandle(),
 			packet:     zpack.Factory().NewPack(ziface.ZinxDataPack),
 			exitChan:   nil,
@@ -70,7 +70,7 @@ func NewUserConfServer(config *utils.Config, opts ...Option) ziface.IServer {
 		Port:      config.TcpPort,
 		ConnMgr:   NewConnManager(),
 		NetPort: NetPort{
-			Name:       utils.GlobalObject.Name,
+			Name:       utils.GlobalObject.Server.Name,
 			msgHandler: NewMsgHandle(),
 			packet:     zpack.Factory().NewPack(ziface.ZinxDataPack),
 			exitChan:   nil,

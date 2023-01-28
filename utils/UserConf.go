@@ -1,7 +1,8 @@
 package utils
 
 import (
-    "github.com/jonny91/zinx/ziface"
+	"github.com/jonny91/zinx/utils/conf"
+	"github.com/jonny91/zinx/ziface"
 )
 
 type Config struct {
@@ -29,13 +30,13 @@ type Config struct {
 	LogDebugClose bool   //是否关闭Debug日志级别调试信息 默认false  -- 默认打开debug信息
 }
 
-//注意如果使用UserConf应该调用方法同步至 GlobalConfObject 因为其他参数是调用的此结构体参数
+// 注意如果使用UserConf应该调用方法同步至 GlobalConfObject 因为其他参数是调用的此结构体参数
 func UserConfToGlobal(config *Config) {
-
+	GlobalObject.Server = &conf.ServerConf{}
 	//Server配置
-	GlobalObject.Name = config.Name
-	GlobalObject.Host = config.Host
-	GlobalObject.TCPPort = config.TcpPort
+	GlobalObject.Server.Name = config.Name
+	GlobalObject.Server.Host = config.Host
+	GlobalObject.Server.TCPPort = config.TcpPort
 
 	//Zinx配置项设置
 	GlobalObject.Version = config.Version

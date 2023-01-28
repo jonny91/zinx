@@ -1,7 +1,8 @@
 // Package utils 提供zinx相关工具类函数
 // 包括:
-//		全局配置
-//		配置文件加载
+//
+//	全局配置
+//	配置文件加载
 //
 // 当前文件描述:
 // @Title  globalobj.go
@@ -10,30 +11,27 @@
 package utils
 
 import (
-	"encoding/json"
+	"bytes"
 	"fmt"
-	"io/ioutil"
+	"github.com/jonny91/zinx/utils/conf"
+	"github.com/jonny91/zinx/ziface"
+	"github.com/spf13/viper"
 	"os"
 
-    "github.com/jonny91/zinx/utils/commandline/args"
-    "github.com/jonny91/zinx/utils/commandline/uflag"
-    "github.com/jonny91/zinx/ziface"
-    "github.com/jonny91/zinx/zlog"
+	"github.com/jonny91/zinx/utils/commandline/args"
+	"github.com/jonny91/zinx/utils/commandline/uflag"
+	"github.com/jonny91/zinx/zlog"
 )
 
 /*
-	存储一切有关Zinx框架的全局参数，供其他模块使用
-	一些参数也可以通过 用户根据 zinx.json来配置
+存储一切有关Zinx框架的全局参数，供其他模块使用
+一些参数也可以通过 用户根据 zinx.json来配置
 */
 type GlobalObj struct {
-	/*
-		Server
-	*/
 	TCPServer ziface.IServer //当前Zinx的全局Server对象
-	Host      string         //当前服务器主机IP
-	TCPPort   int            //当前服务器主机监听端口号
-	Name      string         //当前服务器名称
 
+	Server   *conf.ServerConf
+	Database *conf.DatabaseConf
 	/*
 		Zinx
 	*/
@@ -58,11 +56,11 @@ type GlobalObj struct {
 }
 
 /*
-	定义一个全局的对象
+定义一个全局的对象
 */
 var GlobalObject *GlobalObj
 
-//PathExists 判断一个文件是否存在
+// PathExists 判断一个文件是否存在
 func PathExists(path string) (bool, error) {
 	_, err := os.Stat(path)
 	if err == nil {
@@ -74,7 +72,7 @@ func PathExists(path string) (bool, error) {
 	return false, err
 }
 
-//Reload 读取用户的配置文件
+// Reload 读取用户的配置文件
 func (g *GlobalObj) Reload() {
 
 	if confFileExists, _ := PathExists(g.ConfFilePath); confFileExists != true {
@@ -82,12 +80,16 @@ func (g *GlobalObj) Reload() {
 		return
 	}
 
-	data, err := ioutil.ReadFile(g.ConfFilePath)
-	if err != nil {
-		panic(err)
+	viper.SetConfigType("toml")
+	data, err := os.ReadFile(g.ConfFilePath)
+
+	if err = viper.ReadConfig(bytes.NewBuffer(data)); err != nil {
+		return
 	}
-	//将json数据解析到struct中
-	err = json.Unmarshal(data, g)
+
+	//将数据解析到struct中
+	err = viper.Unmarshal(&g)
+	//err = viper.UnmarshalKey("server", &g)
 	fmt.Println("globalObj:", g)
 	if err != nil {
 		panic(err)
@@ -97,13 +99,13 @@ func (g *GlobalObj) Reload() {
 	if g.LogFile != "" {
 		zlog.SetLogFile(g.LogDir, g.LogFile)
 	}
-	if g.LogDebugClose == true {
+	if g.LogDebugClose {
 		zlog.CloseDebug()
 	}
 }
 
 /*
-	提供init方法，默认加载
+提供init方法，默认加载
 */
 func init() {
 	pwd, err := os.Getwd()
@@ -112,7 +114,7 @@ func init() {
 	}
 
 	// 初始化配置模块flag
-	args.InitConfigFlag(pwd+"/conf/zinx.json", "配置文件，如果没有设置，则默认为<exeDir>/conf/zinx.json")
+	args.InitConfigFlag(pwd+"/conf/config.toml", "配置文件，如果没有设置，则默认为<exeDir>/conf/config.toml")
 	// 初始化日志模块flag TODO
 	// 解析
 	uflag.Parse()
@@ -121,10 +123,12 @@ func init() {
 
 	//初始化GlobalObject变量，设置一些默认值
 	GlobalObject = &GlobalObj{
-		Name:             "ZinxServerApp",
+		Server: &conf.ServerConf{
+			Name:    "ZinxServerApp",
+			TCPPort: 8999,
+			Host:    "0.0.0.0",
+		},
 		Version:          "V1.0",
-		TCPPort:          8999,
-		Host:             "0.0.0.0",
 		MaxConn:          12000,
 		MaxPacketSize:    4096,
 		ConfFilePath:     args.Args.ConfigFile,
@@ -135,7 +139,6 @@ func init() {
 		LogFile:          "",
 		LogDebugClose:    false,
 	}
-
 	//NOTE: 从配置文件中加载一些用户配置的参数
 	GlobalObject.Reload()
 }
