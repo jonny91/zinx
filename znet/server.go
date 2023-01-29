@@ -93,7 +93,7 @@ func (s *Server) Start() {
 	fmt.Printf("[START] Server name: %s,listenner at IP: %s, Port %d is starting\n", s.Name, s.IP, s.Port)
 	s.exitChan = make(chan struct{})
 
-	//开启一个go去做服务端Linster业务
+	//开启一个go去做服务端Listener业务
 	go func() {
 		//0 启动worker工作池机制
 		s.msgHandler.StartWorkerPool()
@@ -122,8 +122,8 @@ func (s *Server) Start() {
 			//3 启动server网络连接业务
 			for {
 				//3.1 设置服务器最大连接控制,如果超过最大连接，则等待
-				if s.ConnMgr.Len() >= utils.GlobalObject.MaxConn {
-					fmt.Println("Exceeded the maxConnNum:", utils.GlobalObject.MaxConn, ", Wait:", AcceptDelay.duration)
+				if s.ConnMgr.Len() >= utils.GlobalObject.Zinx.MaxConn {
+					fmt.Println("Exceeded the maxConnNum:", utils.GlobalObject.Zinx.MaxConn, ", Wait:", AcceptDelay.duration)
 					AcceptDelay.Delay()
 					continue
 				}
@@ -200,12 +200,12 @@ func (s *Server) GetConnMgr() ziface.IConnManager {
 func printLogo() {
 	fmt.Println(zinxLogo)
 	fmt.Println(topLine)
-	fmt.Println(fmt.Sprintf("%s [Github] https://github.com/jonny91                    %s", borderLine, borderLine))
+	fmt.Println(fmt.Sprintf("%s [Github] https://github.com/jonny91/zinx             %s", borderLine, borderLine))
 	fmt.Println(bottomLine)
 	fmt.Printf("[Zinx] Version: %s, MaxConn: %d, MaxPacketSize: %d\n",
-		utils.GlobalObject.Version,
-		utils.GlobalObject.MaxConn,
-		utils.GlobalObject.MaxPacketSize)
+		utils.GlobalObject.Zinx.Version,
+		utils.GlobalObject.Zinx.MaxConn,
+		utils.GlobalObject.Zinx.MaxPacketSize)
 }
 
 func init() {

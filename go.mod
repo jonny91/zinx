@@ -5,4 +5,5 @@ go 1.16
 require (
 	github.com/spf13/viper v1.15.0
 	github.com/stretchr/testify v1.8.1
+	go.mongodb.org/mongo-driver v1.11.1
 )

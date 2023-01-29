@@ -25,22 +25,12 @@ import (
 
 /*
 存储一切有关Zinx框架的全局参数，供其他模块使用
-一些参数也可以通过 用户根据 zinx.json来配置
+一些参数也可以通过 用户根据 config.toml来配置
 */
 type GlobalObj struct {
-	TCPServer ziface.IServer //当前Zinx的全局Server对象
-
 	Server   *conf.ServerConf
 	Database *conf.DatabaseConf
-	/*
-		Zinx
-	*/
-	Version          string //当前Zinx版本号
-	MaxPacketSize    uint32 //都需数据包的最大值
-	MaxConn          int    //当前服务器主机允许的最大链接个数
-	WorkerPoolSize   uint32 //业务工作Worker池的数量
-	MaxWorkerTaskLen uint32 //业务工作Worker对应负责的任务队列最大任务存储数量
-	MaxMsgChanLen    uint32 //SendBuffMsg发送消息的缓冲最大长度
+	Zinx     *conf.ZinxConf
 
 	/*
 		config file path
@@ -58,7 +48,10 @@ type GlobalObj struct {
 /*
 定义一个全局的对象
 */
-var GlobalObject *GlobalObj
+var (
+	GlobalObject *GlobalObj
+	DB           ziface.IDatabase
+)
 
 // PathExists 判断一个文件是否存在
 func PathExists(path string) (bool, error) {
@@ -128,16 +121,20 @@ func init() {
 			TCPPort: 8999,
 			Host:    "0.0.0.0",
 		},
-		Version:          "V1.0",
-		MaxConn:          12000,
-		MaxPacketSize:    4096,
-		ConfFilePath:     args.Args.ConfigFile,
-		WorkerPoolSize:   10,
-		MaxWorkerTaskLen: 1024,
-		MaxMsgChanLen:    1024,
-		LogDir:           pwd + "/log",
-		LogFile:          "",
-		LogDebugClose:    false,
+		Zinx: &conf.ZinxConf{
+			Version:          "V1.0",
+			MaxConn:          12000,
+			MaxPacketSize:    4096,
+			WorkerPoolSize:   10,
+			MaxWorkerTaskLen: 1024,
+			MaxMsgChanLen:    1024,
+		},
+
+		ConfFilePath: args.Args.ConfigFile,
+
+		LogDir:        pwd + "/log",
+		LogFile:       "",
+		LogDebugClose: false,
 	}
 	//NOTE: 从配置文件中加载一些用户配置的参数
 	GlobalObject.Reload()

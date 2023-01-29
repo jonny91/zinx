@@ -39,12 +39,12 @@ func UserConfToGlobal(config *Config) {
 	GlobalObject.Server.TCPPort = config.TcpPort
 
 	//Zinx配置项设置
-	GlobalObject.Version = config.Version
-	GlobalObject.WorkerPoolSize = config.WorkerPoolSize
-	GlobalObject.MaxConn = config.MaxConn
-	GlobalObject.MaxPacketSize = config.MaxPacketSize
-	GlobalObject.MaxMsgChanLen = config.MaxWorkerTaskLen
-	GlobalObject.MaxMsgChanLen = config.MaxMsgChanLen
+	GlobalObject.Zinx.Version = config.Version
+	GlobalObject.Zinx.WorkerPoolSize = config.WorkerPoolSize
+	GlobalObject.Zinx.MaxConn = config.MaxConn
+	GlobalObject.Zinx.MaxPacketSize = config.MaxPacketSize
+	GlobalObject.Zinx.MaxMsgChanLen = config.MaxWorkerTaskLen
+	GlobalObject.Zinx.MaxMsgChanLen = config.MaxMsgChanLen
 
 	//日志配置项目
 	//默认就是False config没有初始化即使用默认配置

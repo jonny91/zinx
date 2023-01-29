@@ -40,7 +40,7 @@ func NewServerConnection(server ziface.IServer, conn *net.TCPConn, connID uint32
 		ConnID:         connID,
 		isClosed:       false,
 		MsgHandler:     msgHandler,
-		msgBuffChan:    make(chan []byte, utils.GlobalObject.MaxMsgChanLen),
+		msgBuffChan:    make(chan []byte, utils.GlobalObject.Zinx.MaxMsgChanLen),
 		property:       nil,
 		ServerOrClient: true,
 	}
@@ -62,7 +62,7 @@ func NewClientConnection(client ziface.IClient, conn *net.TCPConn, connID uint32
 		ConnID:         connID,
 		isClosed:       false,
 		MsgHandler:     msgHandler,
-		msgBuffChan:    make(chan []byte, utils.GlobalObject.MaxMsgChanLen),
+		msgBuffChan:    make(chan []byte, utils.GlobalObject.Zinx.MaxMsgChanLen),
 		property:       nil,
 		ServerOrClient: false,
 	}
@@ -140,7 +140,7 @@ func (c *Connection) StartReader() {
 				index: 0,
 			}
 
-			if utils.GlobalObject.WorkerPoolSize > 0 {
+			if utils.GlobalObject.Zinx.WorkerPoolSize > 0 {
 				//已经启动工作池机制，将消息交给Worker处理
 				c.MsgHandler.SendMsgToTaskQueue(&req)
 			} else {
