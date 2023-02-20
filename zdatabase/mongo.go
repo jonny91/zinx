@@ -13,6 +13,13 @@ type Mongo struct {
 	client *mongo.Client
 }
 
+func (db *Mongo) Init() {
+}
+
+func (db *Mongo) GetName() string {
+	return "db"
+}
+
 func (db *Mongo) Connect(ctx context.Context) (bool, error) {
 	var err error
 	uri := fmt.Sprintf("mongodb://%s:%s@%s:%d",

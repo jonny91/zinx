@@ -15,6 +15,7 @@ import (
 	"fmt"
 	"github.com/jonny91/zinx/utils/conf"
 	"github.com/jonny91/zinx/ziface"
+	"github.com/jonny91/zinx/zservice"
 	"github.com/spf13/viper"
 	"os"
 
@@ -49,8 +50,9 @@ type GlobalObj struct {
 定义一个全局的对象
 */
 var (
-	GlobalObject *GlobalObj
-	DB           ziface.IDatabase
+	GlobalObject  *GlobalObj
+	DB            ziface.IDatabase
+	ServiceCenter zservice.IServiceManager
 )
 
 // PathExists 判断一个文件是否存在
