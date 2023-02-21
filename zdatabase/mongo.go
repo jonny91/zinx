@@ -7,17 +7,38 @@ import (
 	"github.com/jonny91/zinx/utils"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"time"
 )
 
 type Mongo struct {
 	client *mongo.Client
 }
 
-func (db *Mongo) Init() {
+var connectedChan chan bool
+
+func (db *Mongo) Init(background context.Context) (bool, error) {
+	ctx, cancel := context.WithTimeout(background, time.Second*5)
+	defer cancel()
+
+	connectedChan := make(chan bool)
+	go db.Connect(ctx)
+	select {
+	case <-ctx.Done():
+		fmt.Println("mongo connect timeout ...")
+		return false, errors.New("mongo connect timeout")
+
+	case ok := <-connectedChan:
+		if !ok {
+			fmt.Println("mongo connect failed ...")
+			return false, errors.New("mongo connect failed")
+		} else {
+			return true, nil
+		}
+	}
 }
 
 func (db *Mongo) GetName() string {
-	return "db"
+	return "mongo"
 }
 
 func (db *Mongo) Connect(ctx context.Context) (bool, error) {
@@ -31,13 +52,16 @@ func (db *Mongo) Connect(ctx context.Context) (bool, error) {
 	clientOptions := options.Client().ApplyURI(uri)
 	db.client, err = mongo.Connect(ctx, clientOptions)
 	if err != nil {
+		connectedChan <- false
 		return false, err
 	}
 
 	err = db.client.Ping(ctx, nil)
 	if err != nil {
+		connectedChan <- false
 		return false, err
 	}
+	connectedChan <- true
 	return true, nil
 }
 

@@ -1,6 +1,7 @@
 package zservice
 
 import (
+	"context"
 	"github.com/jonny91/zinx/ziface"
 )
 
@@ -13,8 +14,20 @@ type ServiceManager struct {
 	serviceCenter map[string]*ziface.IService
 }
 
-func (s *ServiceManager) Init() {
-	s.serviceCenter = make(map[string]*ziface.IService)
+func NewServiceManager() *ServiceManager {
+	sm := &ServiceManager{
+		serviceCenter: map[string]*ziface.IService{},
+	}
+	return sm
+}
+
+func (s *ServiceManager) Start(ctx context.Context) {
+	for _, service := range s.serviceCenter {
+		ok, err := (*service).Init(ctx)
+		if !ok {
+			panic(err)
+		}
+	}
 }
 
 func (s *ServiceManager) Register(service ziface.IService) {
