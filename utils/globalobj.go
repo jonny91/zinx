@@ -79,13 +79,13 @@ func (g *GlobalObj) Reload() {
 	data, err := os.ReadFile(g.ConfFilePath)
 
 	if err = viper.ReadConfig(bytes.NewBuffer(data)); err != nil {
+		panic(err)
 		return
 	}
 
 	//将数据解析到struct中
 	err = viper.Unmarshal(&g)
 	//err = viper.UnmarshalKey("server", &g)
-	fmt.Println("globalObj:", g)
 	if err != nil {
 		panic(err)
 	}

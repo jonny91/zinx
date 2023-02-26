@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/jonny91/zinx/utils"
+	"github.com/jonny91/zinx/zlog"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"time"
@@ -20,16 +21,15 @@ func (db *Mongo) Init(background context.Context) (bool, error) {
 	ctx, cancel := context.WithTimeout(background, time.Second*5)
 	defer cancel()
 
-	connectedChan := make(chan bool)
+	connectedChan = make(chan bool)
 	go db.Connect(ctx)
 	select {
 	case <-ctx.Done():
-		fmt.Println("mongo connect timeout ...")
+		zlog.Errorf("mongo connect timeout ...")
 		return false, errors.New("mongo connect timeout")
-
 	case ok := <-connectedChan:
 		if !ok {
-			fmt.Println("mongo connect failed ...")
+			zlog.Errorf("mongo connect failed ...")
 			return false, errors.New("mongo connect failed")
 		} else {
 			return true, nil
@@ -49,6 +49,7 @@ func (db *Mongo) Connect(ctx context.Context) (bool, error) {
 		utils.GlobalObject.Database.Host,
 		utils.GlobalObject.Database.Port,
 	)
+	zlog.Infof("try to connect database %s\n", uri)
 	clientOptions := options.Client().ApplyURI(uri)
 	db.client, err = mongo.Connect(ctx, clientOptions)
 	if err != nil {
@@ -61,6 +62,7 @@ func (db *Mongo) Connect(ctx context.Context) (bool, error) {
 		connectedChan <- false
 		return false, err
 	}
+	zlog.Infof("mongo connect success ...\n")
 	connectedChan <- true
 	return true, nil
 }
