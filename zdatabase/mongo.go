@@ -67,6 +67,10 @@ func (db Mongo) Connect(ctx context.Context) (bool, error) {
 	return true, nil
 }
 
+func (db Mongo) GetClient() *mongo.Client {
+	return db.client
+}
+
 func (db Mongo) Close(ctx context.Context) error {
 	if db.client != nil {
 		err := db.client.Disconnect(ctx)
