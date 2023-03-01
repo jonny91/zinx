@@ -52,7 +52,7 @@ type GlobalObj struct {
 var (
 	GlobalObject  *GlobalObj
 	DB            ziface.IDatabase
-	ServiceCenter zservice.IServiceManager
+	ServiceCenter zservice.IServiceManager[ziface.IService]
 )
 
 // PathExists 判断一个文件是否存在
