@@ -18,6 +18,7 @@ import (
 	"github.com/jonny91/zinx/zservice"
 	"github.com/spf13/viper"
 	"os"
+	"testing"
 
 	"github.com/jonny91/zinx/utils/commandline/args"
 	"github.com/jonny91/zinx/utils/commandline/uflag"
@@ -103,6 +104,7 @@ func (g *GlobalObj) Reload() {
 提供init方法，默认加载
 */
 func init() {
+	testing.Init()
 	pwd, err := os.Getwd()
 	if err != nil {
 		pwd = "."

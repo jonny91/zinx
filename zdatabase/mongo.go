@@ -17,7 +17,7 @@ type Mongo struct {
 
 var connectedChan chan bool
 
-func (db Mongo) Init(background context.Context) (bool, error) {
+func (db *Mongo) Init(background context.Context) (bool, error) {
 	ctx, cancel := context.WithTimeout(background, time.Second*5)
 	defer cancel()
 
@@ -37,11 +37,11 @@ func (db Mongo) Init(background context.Context) (bool, error) {
 	}
 }
 
-func (db Mongo) GetName() string {
+func (db *Mongo) GetName() string {
 	return "mongo"
 }
 
-func (db Mongo) Connect(ctx context.Context) (bool, error) {
+func (db *Mongo) Connect(ctx context.Context) (bool, error) {
 	var err error
 	uri := fmt.Sprintf("mongodb://%s:%s@%s:%d",
 		utils.GlobalObject.Database.Username,
@@ -51,7 +51,8 @@ func (db Mongo) Connect(ctx context.Context) (bool, error) {
 	)
 	zlog.Infof("try to connect database %s\n", uri)
 	clientOptions := options.Client().ApplyURI(uri)
-	db.client, err = mongo.Connect(ctx, clientOptions)
+	client, err := mongo.Connect(ctx, clientOptions)
+	db.client = client
 	if err != nil {
 		connectedChan <- false
 		return false, err
@@ -67,11 +68,11 @@ func (db Mongo) Connect(ctx context.Context) (bool, error) {
 	return true, nil
 }
 
-func (db Mongo) GetClient() *mongo.Client {
+func (db *Mongo) GetClient() *mongo.Client {
 	return db.client
 }
 
-func (db Mongo) Close(ctx context.Context) error {
+func (db *Mongo) Close(ctx context.Context) error {
 	if db.client != nil {
 		err := db.client.Disconnect(ctx)
 		return err
