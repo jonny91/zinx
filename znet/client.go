@@ -58,7 +58,7 @@ func NewClient(name string) ziface.IClient {
 			Name:       name,
 			msgHandler: NewMsgHandle(),
 			exitChan:   nil,
-			packet:     zpack.Factory().NewPack(ziface.ZinxMessage),
+			packet:     zpack.Factory().NewPack(ziface.ProtobufDataPack),
 		},
 	}
 	return client

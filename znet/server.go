@@ -47,7 +47,7 @@ func NewServer(opts ...Option) ziface.IServer {
 		NetPort: NetPort{
 			Name:       utils.GlobalObject.Server.Name,
 			msgHandler: NewMsgHandle(),
-			packet:     zpack.Factory().NewPack(ziface.ZinxDataPack),
+			packet:     zpack.Factory().NewPack(ziface.ProtobufDataPack),
 			exitChan:   nil,
 		},
 	}
