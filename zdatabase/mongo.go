@@ -72,6 +72,10 @@ func (db *Mongo) GetClient() *mongo.Client {
 	return db.client
 }
 
+func (db *Mongo) GetCollection(database string, collection string) *mongo.Collection {
+	return db.client.Database(database).Collection(collection)
+}
+
 func (db *Mongo) Close(ctx context.Context) error {
 	if db.client != nil {
 		err := db.client.Disconnect(ctx)

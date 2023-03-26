@@ -16,6 +16,7 @@ import (
 	"github.com/jonny91/zinx/utils/conf"
 	"github.com/jonny91/zinx/ziface"
 	"github.com/jonny91/zinx/zservice"
+	"github.com/jonny91/zinx/ztimer"
 	"github.com/spf13/viper"
 	"os"
 	"testing"
@@ -53,6 +54,7 @@ type GlobalObj struct {
 var (
 	GlobalObject  *GlobalObj
 	DB            ziface.IDatabase
+	TimeSchedule  *ztimer.TimerScheduler
 	ServiceCenter zservice.IServiceManager[ziface.IService]
 )
 
