@@ -37,10 +37,6 @@ func (db *Mongo) Init(background context.Context) (bool, error) {
 	}
 }
 
-func (db *Mongo) GetName() string {
-	return "mongo"
-}
-
 func (db *Mongo) Connect(ctx context.Context) (bool, error) {
 	var err error
 	uri := fmt.Sprintf("mongodb://%s:%s@%s:%d",
